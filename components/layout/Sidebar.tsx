@@ -5,8 +5,11 @@ import SidebarItem from "./SidebarItem";
 import SidebarLogo from "./SidebarLogo ";
 import { BsArrowLeftCircleFill } from "react-icons/bs";
 import SidebarTweetButton from "./SidebarTweetButton";
+import useCurrentUser from "@/hooks/useCurrentUser";
+import { signOut } from "next-auth/react";
 
 const Sidebar = () => {
+  const { data: currentUser } = useCurrentUser();
   const items = [
     {
       label: "Inicio",
@@ -17,11 +20,14 @@ const Sidebar = () => {
       label: "Notificaciones",
       href: "/notifications",
       icon: BsFillBalloonHeartFill,
+      auth: true,
+      alert: currentUser?.hasNotification,
     },
     {
       label: "Perfil",
-      href: "/users/123",
+      href: `/users/${currentUser?.id}`,
       icon: FaUser,
+      auth: true,
     },
   ];
   return (
@@ -35,13 +41,17 @@ const Sidebar = () => {
               href={item.href}
               label={item.label}
               icon={item.icon}
+              auth={item.auth}
+              alert={item.alert}
             />
           ))}
-          <SidebarItem
-            onClick={() => {}}
-            icon={BsArrowLeftCircleFill}
-            label="Salir"
-          />
+          {currentUser && (
+            <SidebarItem
+              onClick={() => signOut()}
+              icon={BsArrowLeftCircleFill}
+              label="Salir"
+            />
+          )}
           <SidebarTweetButton />
         </div>
       </div>

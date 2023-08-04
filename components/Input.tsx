@@ -4,7 +4,7 @@ interface InputProps {
   value?: string;
   type?: string;
   disabled?: boolean;
-  required?: boolean;
+  required?: string;
   onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   label?: string;
 }
@@ -31,6 +31,7 @@ const Input: React.FC<InputProps> = ({
         placeholder={placeholder}
         pattern={pattern}
         type={type}
+        required
         className="
           w-full
           p-4 

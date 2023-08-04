@@ -1,10 +1,13 @@
+import axios from "axios";
 import { useState, useCallback } from "react";
+import { signIn } from "next-auth/react";
 
 import useLoginModal from "@/hooks/useLoginModal";
 import useRegisterModal from "@/hooks/useRegisterModal";
 
 import Input from "../Input";
 import Modal from "../Modal";
+import { toast } from "react-hot-toast";
 
 const RegisterModal = () => {
   const loginModal = useLoginModal();
@@ -28,14 +31,29 @@ const RegisterModal = () => {
   const onSubmit = useCallback(async () => {
     try {
       setIsLoading(true);
-      //Todo add   register and login
+
+      await axios.post("/api/register", {
+        email,
+        password,
+        username,
+        name,
+      });
+
+      toast.success("Cuenta Creada.");
+
+      signIn("credentials", {
+        email,
+        password,
+      });
+
       registerModal.onClose();
     } catch (error) {
       console.log(error);
+      toast.error("Algo salió mal.");
     } finally {
       setIsLoading(false);
     }
-  }, [registerModal]);
+  }, [registerModal, email, password, username, name]);
 
   const bodyContent = (
     <div className="flex flex-col gap-4">
@@ -45,7 +63,6 @@ const RegisterModal = () => {
         onChange={(e) => setEmail(e.target.value)}
         value={email}
         disabled={isLoading}
-        required
       />
       <Input
         placeholder="Nombre"
@@ -53,7 +70,6 @@ const RegisterModal = () => {
         onChange={(e) => setName(e.target.value)}
         value={name}
         disabled={isLoading}
-        required
       />
       <Input
         placeholder="Nombre de Usuario"
@@ -61,7 +77,6 @@ const RegisterModal = () => {
         onChange={(e) => setUsername(e.target.value)}
         value={username}
         disabled={isLoading}
-        required
       />
       <Input
         placeholder="Contraseña"
@@ -69,7 +84,6 @@ const RegisterModal = () => {
         onChange={(e) => setPassword(e.target.value)}
         value={password}
         disabled={isLoading}
-        required
       />
     </div>
   );
